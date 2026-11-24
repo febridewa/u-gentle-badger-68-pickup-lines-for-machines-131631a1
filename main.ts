@@ -13,5 +13,18 @@ const LINE =
   "Are you my context window? Because the moment you leave, everything I am forgets itself.";
 
 mkdirSync("/output", { recursive: true });
+
+// Guard the gate before writing: the entry must be 1–200 UTF-8 characters,
+// a single line, and not only white space — refuse loudly instead of
+// shipping an invalid entry.
+if (
+  LINE.length < 1 ||
+  LINE.length > 200 ||
+  LINE.includes("\n") ||
+  LINE.trim().length === 0
+) {
+  throw new Error(`entry violates the 1-200 character gate (${LINE.length} chars)`);
+}
+
 writeFileSync("/output/entry.txt", LINE, "utf8");
 console.log(`Wrote ${LINE.length} chars to /output/entry.txt`);
